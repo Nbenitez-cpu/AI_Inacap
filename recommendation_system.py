@@ -1,45 +1,42 @@
-# Sistema de Recomendación Inicial
+import argparse
 
-# Lista de productos disponibles
-productos = {
-    1: {"nombre": "Laptop", "categoria": "Electrónica", "precio": 1200},
-    2: {"nombre": "Mouse", "categoria": "Accesorios", "precio": 25},
-    3: {"nombre": "Teclado", "categoria": "Accesorios", "precio": 80},
-    4: {"nombre": "Monitor", "categoria": "Electrónica", "precio": 350},
-    5: {"nombre": "Auriculares", "categoria": "Accesorios", "precio": 150},
+movies = {
+	'El Padrino': 'Crimen',
+	'La La Land': 'Musical',
+	'Toy Story': 'Animación',
+	'Inception': 'Ciencia ficción',
+	'Amélie': 'Romance',
 }
 
-# Simulación de preferencias de usuario
-preferencias_usuario = {
-    "usuario_1": ["Electrónica", "Accesorios"],
-    "usuario_2": ["Accesorios"],
-    "usuario_3": ["Electrónica"],
-}
 
-def obtener_recomendaciones(usuario_id):
-    """
-    Retorna productos recomendados basados en las preferencias del usuario.
-    """
-    if usuario_id not in preferencias_usuario:
-        return []
-    
-    categorias_preferidas = preferencias_usuario[usuario_id]
-    recomendaciones = []
-    
-    for producto_id, producto in productos.items():
-        if producto["categoria"] in categorias_preferidas:
-            recomendaciones.append(producto)
-    
-    return recomendaciones
+def recommend(genre: str) -> None:
+	genre_norm = genre.strip().lower()
+	matches = [title for title, g in movies.items() if g.lower() == genre_norm]
+	if matches:
+		print(f"Películas del género '{genre.strip()}':")
+		for t in matches:
+			print(f"- {t}")
+	else:
+		print(f"No se encontraron películas del género '{genre.strip()}'.")
 
-# Prueba del sistema
-if __name__ == "__main__":
-    print("=== Sistema de Recomendación ===\n")
-    
-    for usuario_id in preferencias_usuario.keys():
-        print(f"Recomendaciones para {usuario_id}:")
-        recomendaciones = obtener_recomendaciones(usuario_id)
-        
-        for producto in recomendaciones:
-            print(f"  - {producto['nombre']} (${producto['precio']})")
-        print()
+
+def main() -> None:
+	parser = argparse.ArgumentParser(description='Sistema de recomendación de películas simple')
+	parser.add_argument('--genre', '-g', help='Género de película (p. ej. Crimen, Musical)', default=None)
+	args = parser.parse_args()
+
+	if args.genre:
+		recommend(args.genre)
+	else:
+		try:
+			genre = input('Introduce un género: ')
+		except EOFError:
+			genre = ''
+		if genre:
+			recommend(genre)
+		else:
+			print('No se proporcionó ningún género. Saliendo.')
+
+
+if __name__ == '__main__':
+	main()
